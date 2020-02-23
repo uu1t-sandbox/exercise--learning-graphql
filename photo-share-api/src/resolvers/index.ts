@@ -42,6 +42,7 @@ let tags = [
 ];
 
 const resolvers = {
+  // TODO: replace with Query.ts
   Query: {
     totalPhotos: () => photos.length,
     allPhotos: (parent, args) => {

@@ -1,0 +1,11 @@
+overwrite: true
+schema:
+  - schema.graphql
+generates:
+  ../photo-share-api/src/resolvers/graphql.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-resolvers'
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'

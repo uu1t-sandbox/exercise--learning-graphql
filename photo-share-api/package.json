@@ -8,16 +8,18 @@
   "main": "index.ts",
   "private": true,
   "scripts": {
-    "start": "nodemon -e js,json,graphql --watch index.ts --exec ts-node index.ts",
+    "start": "nodemon -e js,json,graphql --watch 'src/**/*.ts' --exec ts-node ./src/index.ts",
     "test": "exit 1"
   },
   "dependencies": {
     "apollo-server-express": "^2.10.1",
     "express": "^4.17.1",
     "graphql": "^14.6.0",
+    "mongodb": "^3.5.3",
     "nodemon": "^2.0.2"
   },
   "devDependencies": {
+    "@types/mongodb": "^3.3.16",
     "@types/node": "^13.7.4",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.2"
