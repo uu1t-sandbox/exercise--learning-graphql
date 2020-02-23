@@ -11,15 +11,39 @@ export type Scalars = {
   DateTime: any,
 };
 
+export type AuthPayload = {
+   __typename?: 'AuthPayload',
+  token: Scalars['String'],
+  user: User,
+};
+
 
 export type Mutation = {
    __typename?: 'Mutation',
+  githubAuth: AuthPayload,
+  fakeUserAuth: AuthPayload,
   postPhoto: Photo,
+  addFakeUsers: Array<User>,
+};
+
+
+export type MutationGithubAuthArgs = {
+  code: Scalars['String']
+};
+
+
+export type MutationFakeUserAuthArgs = {
+  githubLogin: Scalars['ID']
 };
 
 
 export type MutationPostPhotoArgs = {
   input: PostPhotoInput
+};
+
+
+export type MutationAddFakeUsersArgs = {
+  count?: Maybe<Scalars['Int']>
 };
 
 export type Photo = {
@@ -50,6 +74,7 @@ export type PostPhotoInput = {
 
 export type Query = {
    __typename?: 'Query',
+  me?: Maybe<User>,
   totalPhotos: Scalars['Int'],
   allPhotos: Array<Photo>,
   totalUsers: Scalars['Int'],
@@ -139,14 +164,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
-  Int: ResolverTypeWrapper<Scalars['Int']>,
-  Photo: ResolverTypeWrapper<Photo>,
+  User: ResolverTypeWrapper<User>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   String: ResolverTypeWrapper<Scalars['String']>,
+  Photo: ResolverTypeWrapper<Photo>,
   PhotoCategory: PhotoCategory,
-  User: ResolverTypeWrapper<User>,
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>,
+  Int: ResolverTypeWrapper<Scalars['Int']>,
   Mutation: ResolverTypeWrapper<{}>,
+  AuthPayload: ResolverTypeWrapper<AuthPayload>,
   PostPhotoInput: PostPhotoInput,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
 };
@@ -154,16 +180,23 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {},
-  Int: Scalars['Int'],
-  Photo: Photo,
+  User: User,
   ID: Scalars['ID'],
   String: Scalars['String'],
+  Photo: Photo,
   PhotoCategory: PhotoCategory,
-  User: User,
   DateTime: Scalars['DateTime'],
+  Int: Scalars['Int'],
   Mutation: {},
+  AuthPayload: AuthPayload,
   PostPhotoInput: PostPhotoInput,
   Boolean: Scalars['Boolean'],
+};
+
+export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };
 
 export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -171,7 +204,10 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  githubAuth?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationGithubAuthArgs, 'code'>>,
+  fakeUserAuth?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationFakeUserAuthArgs, 'githubLogin'>>,
   postPhoto?: Resolver<ResolversTypes['Photo'], ParentType, ContextType, RequireFields<MutationPostPhotoArgs, 'input'>>,
+  addFakeUsers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationAddFakeUsersArgs, 'count'>>,
 };
 
 export type PhotoResolvers<ContextType = any, ParentType extends ResolversParentTypes['Photo'] = ResolversParentTypes['Photo']> = {
@@ -187,6 +223,7 @@ export type PhotoResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
   totalPhotos?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   allPhotos?: Resolver<Array<ResolversTypes['Photo']>, ParentType, ContextType>,
   totalUsers?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
@@ -203,6 +240,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  AuthPayload?: AuthPayloadResolvers<ContextType>,
   DateTime?: GraphQLScalarType,
   Mutation?: MutationResolvers<ContextType>,
   Photo?: PhotoResolvers<ContextType>,

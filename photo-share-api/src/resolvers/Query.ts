@@ -1,12 +1,9 @@
-import { Db } from 'mongodb';
-
+import { Context } from '../';
 import { QueryResolvers } from './graphql';
 
-type Context = {
-  db: Db;
-};
-
 const Query: QueryResolvers<Context> = {
+  me: (parent, args, { currentUser }) => currentUser,
+
   totalPhotos: (parent, args, { db }) =>
     db.collection('photos').estimatedDocumentCount(),
 
