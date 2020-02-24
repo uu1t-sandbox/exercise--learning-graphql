@@ -6,6 +6,14 @@ generates:
     plugins:
       - 'typescript'
       - 'typescript-resolvers'
+  ../photo-share-client/src/graphql.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withComponent: false
+      withHooks: true
   ./graphql.schema.json:
     plugins:
       - 'introspection'
