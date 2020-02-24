@@ -34,7 +34,21 @@ type UserListProps = {
 };
 
 const UserList: React.FC<UserListProps> = ({ count, users, refetchUsers }) => {
-  const [addFakeUsers] = useMutation(ADD_FAKE_USERS_MUTATION);
+  const [addFakeUsers] = useMutation(ADD_FAKE_USERS_MUTATION, {
+    update(cache, { data: { addFakeUsers } }) {
+      let { totalUsers, allUsers, ...rest } = cache.readQuery<Query>({
+        query: ROOT_QUERY
+      }) as Query;
+      cache.writeQuery({
+        query: ROOT_QUERY,
+        data: {
+          ...rest,
+          totalUsers: totalUsers + addFakeUsers.length,
+          allUsers: allUsers.concat(addFakeUsers)
+        }
+      });
+    }
+  });
   return (
     <div>
       <p>{count} Users</p>
