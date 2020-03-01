@@ -80,6 +80,12 @@ export type Query = {
   allUsers: Array<User>,
 };
 
+export type Subscription = {
+   __typename?: 'Subscription',
+  newPhoto: Photo,
+  newUser: User,
+};
+
 export type User = {
    __typename?: 'User',
   githubLogin: Scalars['ID'],

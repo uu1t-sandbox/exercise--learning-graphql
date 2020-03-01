@@ -2,10 +2,10 @@ import fetch from 'node-fetch';
 
 import { Context } from '../';
 import { authorizeWithGithub } from '../lib';
-import { MutationResolvers, Photo } from './graphql';
+import { MutationResolvers } from './graphql';
 
 const Mutation: MutationResolvers<Context> = {
-  githubAuth: async (parent, { code }, { db }) => {
+  githubAuth: async (parent, { code }, { db, pubsub }) => {
     const {
       access_token,
       avatar_url,
@@ -30,10 +30,15 @@ const Mutation: MutationResolvers<Context> = {
     };
 
     const {
-      ops: [user]
+      ops: [user],
+      upsertedCount
     } = await db
       .collection('users')
       .replaceOne({ githubLogin: login }, latestUserInfo, { upsert: true });
+
+    if (upsertedCount) {
+      pubsub.publish('user-added', { newUser: user });
+    }
 
     return { user, token: access_token };
   },
@@ -51,7 +56,7 @@ const Mutation: MutationResolvers<Context> = {
     };
   },
 
-  postPhoto: async (parent, args, { db, currentUser }) => {
+  postPhoto: async (parent, args, { db, currentUser, pubsub }) => {
     if (!currentUser) {
       throw new Error('only an authorized user can post a photo');
     }
@@ -65,10 +70,12 @@ const Mutation: MutationResolvers<Context> = {
     const { insertedIds } = await db.collection('photos').insert(newPhoto);
     newPhoto.id = insertedIds[0];
 
+    pubsub.publish('photo-added', { newPhoto });
+
     return newPhoto;
   },
 
-  addFakeUsers: async (parent, { count }, { db }) => {
+  addFakeUsers: async (parent, { count }, { db, pubsub }) => {
     const randomUserApi = `https://randomuser.me/api/?results=${count}`;
     const { results } = await fetch(randomUserApi).then(res => res.json());
 
@@ -80,6 +87,8 @@ const Mutation: MutationResolvers<Context> = {
     }));
 
     await db.collection('users').insert(users);
+
+    users.map(newUser => pubsub.publish('user-added', { newUser }));
 
     return users;
   }
