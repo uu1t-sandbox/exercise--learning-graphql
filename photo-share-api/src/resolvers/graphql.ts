@@ -9,6 +9,7 @@ export type Scalars = {
   Int: number,
   Float: number,
   DateTime: any,
+  Upload: any,
 };
 
 export type AuthPayload = {
@@ -70,6 +71,7 @@ export type PostPhotoInput = {
   name: Scalars['String'],
   category?: Maybe<PhotoCategory>,
   description?: Maybe<Scalars['String']>,
+  file: Scalars['Upload'],
 };
 
 export type Query = {
@@ -86,6 +88,7 @@ export type Subscription = {
   newPhoto: Photo,
   newUser: User,
 };
+
 
 export type User = {
    __typename?: 'User',
@@ -180,6 +183,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>,
   AuthPayload: ResolverTypeWrapper<AuthPayload>,
   PostPhotoInput: PostPhotoInput,
+  Upload: ResolverTypeWrapper<Scalars['Upload']>,
   Subscription: ResolverTypeWrapper<{}>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
 };
@@ -197,6 +201,7 @@ export type ResolversParentTypes = {
   Mutation: {},
   AuthPayload: AuthPayload,
   PostPhotoInput: PostPhotoInput,
+  Upload: Scalars['Upload'],
   Subscription: {},
   Boolean: Scalars['Boolean'],
 };
@@ -243,6 +248,10 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   newUser?: SubscriptionResolver<ResolversTypes['User'], "newUser", ParentType, ContextType>,
 };
 
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload'
+}
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   githubLogin?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
@@ -259,6 +268,7 @@ export type Resolvers<ContextType = any> = {
   Photo?: PhotoResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
   Subscription?: SubscriptionResolvers<ContextType>,
+  Upload?: GraphQLScalarType,
   User?: UserResolvers<ContextType>,
 };
 

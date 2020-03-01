@@ -1,10 +1,12 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { gql } from 'apollo-boost';
 import { useApolloClient, useSubscription } from '@apollo/react-hooks';
 
 import AuthorizedUser from './AuthorizedUser';
 import Users from './Users';
+import Photos from './pages/photos';
+import PhotosNew from './pages/photos/new';
 import { Query, Subscription } from './graphql';
 
 export const ROOT_QUERY = gql`
@@ -15,6 +17,11 @@ export const ROOT_QUERY = gql`
     }
     me {
       ...userInfo
+    }
+    allPhotos {
+      id
+      name
+      url
     }
   }
 
@@ -31,6 +38,16 @@ const LISTEN_FOR_USERS = gql`
       githubLogin
       name
       avatar
+    }
+  }
+`;
+
+const LISTEN_FOR_PHOTOS = gql`
+  subscription {
+    newPhoto {
+      id
+      name
+      url
     }
   }
 `;
@@ -56,12 +73,35 @@ const App = () => {
     }
   });
 
+  useSubscription<Subscription>(LISTEN_FOR_PHOTOS, {
+    onSubscriptionData: ({ subscriptionData: { data } }) => {
+      if (data?.newPhoto) {
+        const { allPhotos, ...rest } = client.readQuery<Query>({
+          query: ROOT_QUERY
+        }) as Query;
+        client.writeQuery({
+          query: ROOT_QUERY,
+          data: {
+            ...rest,
+            allPhotos: [...allPhotos, data.newPhoto]
+          }
+        });
+      }
+    }
+  });
+
   return (
     <BrowserRouter>
-      <div>
-        <AuthorizedUser />
-        <Users />
-      </div>
+      <Switch>
+        <Route exact path="/">
+          <>
+            <AuthorizedUser />
+            <Users />
+            <Photos />
+          </>
+        </Route>
+        <Route exact path="/photos/new" component={PhotosNew} />
+      </Switch>
     </BrowserRouter>
   );
 };

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { createServer } from 'http';
+import path from 'path';
 
 import { ApolloServer, PubSub } from 'apollo-server-express';
 import express from 'express';
@@ -39,6 +40,11 @@ const start = async () => {
   server.applyMiddleware({ app });
 
   app.get('/', (req, res) => res.end('Welcome to the PhotoSHare API'));
+
+  app.use(
+    '/img/photos',
+    express.static(path.join(__dirname, '..', 'assets', 'photos'))
+  );
 
   const httpServer = createServer(app);
   server.installSubscriptionHandlers(httpServer);

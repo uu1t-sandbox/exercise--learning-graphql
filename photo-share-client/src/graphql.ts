@@ -8,6 +8,7 @@ export type Scalars = {
   Int: number,
   Float: number,
   DateTime: any,
+  Upload: any,
 };
 
 export type AuthPayload = {
@@ -69,6 +70,7 @@ export type PostPhotoInput = {
   name: Scalars['String'],
   category?: Maybe<PhotoCategory>,
   description?: Maybe<Scalars['String']>,
+  file: Scalars['Upload'],
 };
 
 export type Query = {
@@ -85,6 +87,7 @@ export type Subscription = {
   newPhoto: Photo,
   newUser: User,
 };
+
 
 export type User = {
    __typename?: 'User',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import { gql } from 'apollo-boost';
 import { useApolloClient, useMutation, useQuery } from '@apollo/react-hooks';
 
@@ -33,6 +33,7 @@ const Me: React.FC<MeProps> = ({ requestCode, signingIn, signOut }) => {
         <img src={data.me.avatar!} width="48" height="48" alt="" />
         <h1>{data.me.name}</h1>
         <button onClick={signOut}>Sign Out</button>
+        <NavLink to="/photos/new">Post Photo</NavLink>
       </div>
     );
   }

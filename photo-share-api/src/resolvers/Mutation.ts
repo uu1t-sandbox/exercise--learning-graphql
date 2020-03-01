@@ -1,7 +1,9 @@
+import path from 'path';
+
 import fetch from 'node-fetch';
 
 import { Context } from '../';
-import { authorizeWithGithub } from '../lib';
+import { authorizeWithGithub, uploadStream } from '../lib';
 import { MutationResolvers } from './graphql';
 
 const Mutation: MutationResolvers<Context> = {
@@ -69,6 +71,18 @@ const Mutation: MutationResolvers<Context> = {
 
     const { insertedIds } = await db.collection('photos').insert(newPhoto);
     newPhoto.id = insertedIds[0];
+
+    const toPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'assets',
+      'photos',
+      `${newPhoto.id}.jpg`
+    );
+
+    const stream = (await args.input.file).createReadStream();
+    await uploadStream(stream, toPath);
 
     pubsub.publish('photo-added', { newPhoto });
 

@@ -1,6 +1,8 @@
 overwrite: true
 schema:
   - schema.graphql
+  - |
+    scalar Upload
 generates:
   ../photo-share-api/src/resolvers/graphql.ts:
     plugins:
@@ -14,6 +16,6 @@ generates:
     config:
       withComponent: false
       withHooks: true
-  ./graphql.schema.json:
+  ./schema.json:
     plugins:
       - 'introspection'

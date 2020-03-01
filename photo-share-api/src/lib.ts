@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import fetch from 'node-fetch';
 
 const requestGithubToken = credentials =>
@@ -20,3 +22,17 @@ export const authorizeWithGithub = async credentials => {
   const githubUser = await requestGithubUserAccount(access_token);
   return { ...githubUser, access_token };
 };
+
+export const uploadStream = (
+  stream: NodeJS.ReadableStream,
+  path: fs.PathLike
+) =>
+  new Promise((resolve, reject) => {
+    stream
+      .on('error', error => {
+        fs.unlinkSync(path);
+        reject(error);
+      })
+      .on('end', resolve)
+      .pipe(fs.createWriteStream(path));
+  });
